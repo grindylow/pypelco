@@ -5,6 +5,11 @@
 #   https://www.aliexpress.com/item/Pan-Tilt-motorized-rotation-bracket-stand-holder-PELCO-D-control-for-CCTV-IP-camera-module-RS232/32827664380.html
 #
 
+#
+# Copyright notices:
+#
+# - Uses Icons designed by 'Lucy G', 'Freepik' and 'Smashicons' from Flaticon.
+
 import serial
 import tkinter as tk
 import tkinter.ttk
@@ -24,6 +29,8 @@ class Application(tk.Frame):
 
     def create_widgets(self):
     
+        self.winfo_toplevel().title("PELCO-D Controller")
+        
         self.create_joystick()
         
         self.cb_port_label = tk.Label(self)
@@ -73,18 +80,24 @@ class Application(tk.Frame):
         self.micro_left.grid(column=2,row=4)
         
         self.pan_right = tk.Button(self)
-        self.pan_right["text"] = "PAN RIGHT"
+        self.pan_right.img = tk.PhotoImage(file="icons\\003-play-button.png")
+        self.pan_right["image"] = self.pan_right.img
+        #self.pan_right["text"] = "PAN RIGHT"
+        #self.pan_right["image"] = img_pan_right
         self.pan_right["command"] = self.do_pan_right
         self.pan_right.grid(column=6,row=4)
 
         self.pan_right_while_pressed = tk.Button(self)
+        self.pan_right_while_pressed.img = tk.PhotoImage(file="icons\\002-arrow-point-to-right.png")
+        self.pan_right_while_pressed["image"] = self.pan_right_while_pressed.img
         self.pan_right_while_pressed["text"] = "PAN RIGHT (hold)"
         self.pan_right_while_pressed.bind("<ButtonPress>",self.do_pan_right)
         self.pan_right_while_pressed.bind("<ButtonRelease>",self.do_stop)
         self.pan_right_while_pressed.grid(column=5,row=4)
 
         self.micro_right = tk.Button(self)
-        self.micro_right["text"] = "µRIGHT"
+        self.micro_right.img = tk.PhotoImage(file="icons\\001-right-arrow.png")
+        self.micro_right["image"] = self.micro_right.img
         self.micro_right["command"] = self.do_microstep_right
         self.micro_right.grid(column=4,row=4)
 
