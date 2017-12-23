@@ -1,7 +1,8 @@
-#
+#!/usr/bin/python3
+
 # Graphical User Interface for Controlling a PELCO-D Camera Mount
 #
-# specifically this seems to work well with a 
+# specifically this seems to work well with a
 #   https://www.aliexpress.com/item/Pan-Tilt-motorized-rotation-bracket-stand-holder-PELCO-D-control-for-CCTV-IP-camera-module-RS232/32827664380.html
 #
 
@@ -13,6 +14,8 @@
 import serial
 import tkinter as tk
 import tkinter.ttk
+import os
+
 from pelco_mount import *
 
 class Application(tk.Frame):
@@ -21,22 +24,22 @@ class Application(tk.Frame):
         self.pack()
         self.create_widgets()
         #self.init_mount()
-        
+
     def init_mount(self,port="com4"):
         ser = serial.Serial(port,timeout=.1,baudrate=2400)
         print(ser)
         self.mount = pelco_mount(ser)
 
     def create_widgets(self):
-    
+
         self.winfo_toplevel().title("PELCO-D Controller")
-        
+
         self.create_joystick()
-        
+
         self.cb_port_label = tk.Label(self)
         self.cb_port_label["text"] = "COM-Port:"
         self.cb_port_label.grid(column=0,row=0)
-        
+
         self.cb_port = tk.ttk.Combobox(self,values=["COM1","COM2","COM3","COM4","COM5"])
         self.cb_port.grid(column=1,row=0)
 
@@ -45,7 +48,7 @@ class Application(tk.Frame):
         self.b_connect["command"] = self.do_connect
         self.b_connect.grid(column=2,row=0)
 
-        
+
         # init
         self.pan_up = tk.Button(self)
         self.pan_up["text"] = "INIT"
@@ -78,9 +81,10 @@ class Application(tk.Frame):
         self.micro_left["text"] = "µLEFT"
         self.micro_left["command"] = self.do_microstep_left
         self.micro_left.grid(column=2,row=4)
-        
+
         self.pan_right = tk.Button(self)
-        self.pan_right.img = tk.PhotoImage(file="icons\\003-play-button.png")
+        self.pan_right.img = tk.PhotoImage(
+            file="icons" + os.sep + "003-play-button.png")
         self.pan_right["image"] = self.pan_right.img
         #self.pan_right["text"] = "PAN RIGHT"
         #self.pan_right["image"] = img_pan_right
@@ -88,7 +92,7 @@ class Application(tk.Frame):
         self.pan_right.grid(column=6,row=4)
 
         self.pan_right_while_pressed = tk.Button(self)
-        self.pan_right_while_pressed.img = tk.PhotoImage(file="icons\\002-arrow-point-to-right.png")
+        self.pan_right_while_pressed.img = tk.PhotoImage(file="icons" + os.sep + "002-arrow-point-to-right.png")
         self.pan_right_while_pressed["image"] = self.pan_right_while_pressed.img
         self.pan_right_while_pressed["text"] = "PAN RIGHT (hold)"
         self.pan_right_while_pressed.bind("<ButtonPress>",self.do_pan_right)
@@ -96,7 +100,7 @@ class Application(tk.Frame):
         self.pan_right_while_pressed.grid(column=5,row=4)
 
         self.micro_right = tk.Button(self)
-        self.micro_right.img = tk.PhotoImage(file="icons\\001-right-arrow.png")
+        self.micro_right.img = tk.PhotoImage(file="icons" + os.sep + "001-right-arrow.png")
         self.micro_right["image"] = self.micro_right.img
         self.micro_right["command"] = self.do_microstep_right
         self.micro_right.grid(column=4,row=4)
@@ -135,7 +139,7 @@ class Application(tk.Frame):
         self.micro_down["command"] = self.do_microstep_down
         self.micro_down.grid(column=3,row=5)
 
-        
+
         self.b_stop = tk.Button(self)
         self.b_stop["text"] = "STOP"
         self.b_stop["command"] = self.do_stop
@@ -163,11 +167,11 @@ class Application(tk.Frame):
     def do_microstep_up(self,event=0):
         self.mount.pan_up()
         self.mount.stop_moving()
-        
+
     def do_microstep_down(self,event=0):
         self.mount.pan_down()
         self.mount.stop_moving()
-        
+
     def do_microstep_left(self,event=0):
         self.mount.pan_left()
         self.mount.stop_moving()
@@ -179,7 +183,7 @@ class Application(tk.Frame):
     def do_pan_right(self,event=0):
         print("panning right")
         self.mount.pan_right()
-        
+
     def do_stop(self,event=0):
         print("stopping")
         self.mount.stop_moving()
@@ -187,7 +191,7 @@ class Application(tk.Frame):
     def do_init(self,event=0):
         self.mount.test_init()
 
-        
+
 root = tk.Tk()
 app = Application(master=root)
 app.mainloop()
