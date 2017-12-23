@@ -18,6 +18,9 @@ class pelco_mount():
         self._outport = p
         self._adr = 1
     
+    def close_port(self):
+        self._outport.close()
+        
     #
     # Actions
     #

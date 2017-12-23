@@ -12,6 +12,7 @@
 # - Uses Icons designed by 'Lucy G', 'Freepik' and 'Smashicons' from Flaticon.
 
 import serial
+import serial.tools.list_ports
 import tkinter as tk
 import tkinter.ttk
 import os
@@ -30,24 +31,45 @@ class Application(tk.Frame):
         print(ser)
         self.mount = pelco_mount(ser)
 
+    def deinit_mount(self):
+        self.mount.close_port()
+
     def create_widgets(self):
 
         self.winfo_toplevel().title("PELCO-D Controller")
 
-        self.create_joystick()
-
-        self.cb_port_label = tk.Label(self)
+        self.connectionframe = tk.LabelFrame(self)
+        self.connectionframe["text"] = "Connection"
+        self.connectionframe.grid(column=0,columnspan=10,row=0,sticky=tk.W,padx=5,pady=5,ipady=5,ipadx=5)
+        
+        self.cb_port_label = tk.Label(self.connectionframe)
         self.cb_port_label["text"] = "COM-Port:"
-        self.cb_port_label.grid(column=0,row=0)
+        self.cb_port_label.grid(column=0,row=0,padx=5)
 
-        self.cb_port = tk.ttk.Combobox(self,values=["COM1","COM2","COM3","COM4","COM5"])
-        self.cb_port.grid(column=1,row=0)
+        self.cb_port = tk.ttk.Combobox(self.connectionframe)
+        self.do_refresh_port_list()
+        self.cb_port.grid(column=1,row=0,padx=5)
 
-        self.b_connect = tk.Button(self)
+        self.b_refresh = tk.Button(self.connectionframe)
+        self.b_refresh["text"] = "Refresh port list!"
+        self.b_refresh["command"] = self.do_refresh_port_list
+        self.b_refresh.grid(column=2,row=0,padx=5)
+        
+        self.b_connect = tk.Button(self.connectionframe)
         self.b_connect["text"] = "Connect!"
         self.b_connect["command"] = self.do_connect
-        self.b_connect.grid(column=2,row=0)
+        self.b_connect.grid(column=3,row=0)
+        
+        self.b_disconnect = tk.Button(self.connectionframe)
+        self.b_disconnect["text"] = "Disconnect!"
+        self.b_disconnect["command"] = self.do_disconnect
+        self.b_disconnect.grid(column=4,row=0)
 
+        self.connection_status_label = tk.Label(self.connectionframe)
+        self.connection_status_label["text"] = "Connection status: not initialised"
+        self.connection_status_label.grid(column=0,row=1,columnspan=5,padx=5,sticky=tk.W)
+        
+        self.create_joystick()
 
         # init
         self.pan_up = tk.Button(self)
@@ -147,9 +169,30 @@ class Application(tk.Frame):
 
     def do_connect(self,event=0):
         # connect to serial port contained in combobox
+        portidx = self.cb_port.current()   # returns currently selected index, or -1 if current selection not contained in "values"
+        print("PORTIDX=%s"%portidx)
         port = self.cb_port.get()
+        if portidx==-1:
+            # custom text content
+            pass
+        else:
+            port = self.available_ports[portidx].device
         print("Connecting to '%s'..."%port)
         self.init_mount(port)
+        self.connection_status_label["text"] = "Connection status: Connected to %s."%port
+        
+    def do_disconnect(self,event=0):
+        self.deinit_mount()
+        self.connection_status_label["text"] = "Connection status: not connected."
+        
+    def do_refresh_port_list(self,event=0):
+        self.available_ports = serial.tools.list_ports.comports()
+        #for p in ports:
+        #    d=dir(p)
+        #    for n in d:
+        #        print("%s: "%str(n) + str(p.__getattribute__(n)))
+        self.cb_port["values"] = [x.description for x in self.available_ports]
+        self.cb_port.current(0)
 
     def say_hi(self):
         print("hi there, everyone!")
