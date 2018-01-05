@@ -36,6 +36,9 @@ class pelco_mount():
     def pan_up(self):
         self._outport.write(self.msg_pan_up())
                 
+    def set_speed(self,speed):
+        self._outport.write(self.msg_set_speed(speed))
+                
     def stop_moving(self):
         self._outport.write(self.msg_pan_stop())
         

@@ -42,19 +42,19 @@ class Application(tk.Frame):
         self.create_connection_frame()
         self.create_joystick_frame()
         self.create_additional_controls_frame()
-
+        self.create_memory_buttons()
+        
         # init
-
         # speed
         # self.pan_up = tk.Button(self)
         # self.pan_up["text"] = "Select Speed"
         # self.pan_up["command"] = self.update_speed
         # self.pan_up.grid(column=8,row=1)
-    def create_connection_frame(self):
 
+    def create_connection_frame(self):
         self.connectionframe = tk.LabelFrame(self)
         self.connectionframe["text"] = "Connection"
-        self.connectionframe.grid(column=0,columnspan=10,row=0,sticky=tk.W,padx=5,pady=5,ipady=5,ipadx=5)
+        self.connectionframe.grid(column=0,columnspan=2,row=0,sticky=tk.W+tk.E,padx=5,pady=5,ipady=5,ipadx=5)
 
         self.cb_port_label = tk.Label(self.connectionframe)
         self.cb_port_label["text"] = "COM-Port:"
@@ -83,23 +83,23 @@ class Application(tk.Frame):
 
         self.connection_status_label = tk.Label(self.connectionframe)
         self.connection_status_label["text"] = "Connection status: not initialised"
-        self.connection_status_label.grid(column=0,row=1,columnspan=5,padx=5,sticky=tk.W)
+        self.connection_status_label.grid(column=0,row=1,columnspan=5,sticky=tk.W,padx=5,pady=5,ipady=5,ipadx=5)
 
     def create_joystick_frame(self):
         self.joystickframe = tk.LabelFrame(self)
-        self.joystickframe["text"] = "Joistick"
-        self.joystickframe.grid(column=0,row=3)
+        self.joystickframe["text"] = "Joystick"
+        self.joystickframe.grid(column=0,row=1,sticky=tk.W+tk.E,padx=5,pady=5,ipady=5,ipadx=5)
 
         # left
         self.pan_left = tk.Button(self.joystickframe)
-        self.pan_left.img = tk.PhotoImage(file="icons" + os.sep + "play-left.png")
+        self.pan_left.img = tk.PhotoImage(file="icons" + os.sep + "play-left.png").subsample(2,2)
         self.pan_left["image"] = self.pan_left.img
         self.pan_left["text"] = "PAN LEFT"
         self.pan_left["command"] = self.do_pan_left
         self.pan_left.grid(column=0,row=4)
 
         self.pan_left_while_pressed = tk.Button(self.joystickframe)
-        self.pan_left_while_pressed.img = tk.PhotoImage(file="icons" + os.sep + "while-pressed-left.png")
+        self.pan_left_while_pressed.img = tk.PhotoImage(file="icons" + os.sep + "while-pressed-left.png").subsample(2,2)
         self.pan_left_while_pressed["image"] = self.pan_left_while_pressed.img
         self.pan_left_while_pressed["text"] = "PAN LEFT (hold)"
         self.pan_left_while_pressed.bind("<ButtonPress>",self.do_pan_left)
@@ -107,7 +107,7 @@ class Application(tk.Frame):
         self.pan_left_while_pressed.grid(column=1,row=4)
 
         self.micro_left = tk.Button(self.joystickframe)
-        self.micro_left.img = tk.PhotoImage(file="icons" + os.sep + "micro-left.png")
+        self.micro_left.img = tk.PhotoImage(file="icons" + os.sep + "micro-left.png").subsample(2,2)
         self.micro_left["image"] = self.micro_left.img
         self.micro_left["text"] = "µLEFT"
         self.micro_left["command"] = self.do_microstep_left
@@ -115,13 +115,13 @@ class Application(tk.Frame):
 
         # right
         self.pan_right = tk.Button(self.joystickframe)
-        self.pan_right.img = tk.PhotoImage(file="icons" + os.sep + "play-right.png")
+        self.pan_right.img = tk.PhotoImage(file="icons" + os.sep + "play-right.png").subsample(2,2)
         self.pan_right["image"] = self.pan_right.img
         self.pan_right["command"] = self.do_pan_right
         self.pan_right.grid(column=6,row=4)
 
         self.pan_right_while_pressed = tk.Button(self.joystickframe)
-        self.pan_right_while_pressed.img = tk.PhotoImage(file="icons" + os.sep + "while-pressed-right.png")
+        self.pan_right_while_pressed.img = tk.PhotoImage(file="icons" + os.sep + "while-pressed-right.png").subsample(2,2)
         self.pan_right_while_pressed["image"] = self.pan_right_while_pressed.img
         self.pan_right_while_pressed["text"] = "PAN RIGHT (hold)"
         self.pan_right_while_pressed.bind("<ButtonPress>",self.do_pan_right)
@@ -129,21 +129,21 @@ class Application(tk.Frame):
         self.pan_right_while_pressed.grid(column=5,row=4)
 
         self.micro_right = tk.Button(self.joystickframe)
-        self.micro_right.img = tk.PhotoImage(file="icons" + os.sep + "micro-right.png")
+        self.micro_right.img = tk.PhotoImage(file="icons" + os.sep + "micro-right.png").subsample(2,2)
         self.micro_right["image"] = self.micro_right.img
         self.micro_right["command"] = self.do_microstep_right
         self.micro_right.grid(column=4,row=4)
 
         # up
         self.pan_up = tk.Button(self.joystickframe)
-        self.pan_up.img = tk.PhotoImage(file="icons" + os.sep + "play-up.png")
+        self.pan_up.img = tk.PhotoImage(file="icons" + os.sep + "play-up.png").subsample(2,2)
         self.pan_up["image"] = self.pan_up.img
         self.pan_up["text"] = "PAN UP"
         self.pan_up["command"] = self.do_pan_up
         self.pan_up.grid(column=3,row=1)
 
         self.pan_up_while_pressed = tk.Button(self.joystickframe)
-        self.pan_up_while_pressed.img = tk.PhotoImage(file="icons" + os.sep + "while-pressed-up.png")
+        self.pan_up_while_pressed.img = tk.PhotoImage(file="icons" + os.sep + "while-pressed-up.png").subsample(2,2)
         self.pan_up_while_pressed["image"] = self.pan_up_while_pressed.img
         self.pan_up_while_pressed["text"] = "PAN UP (hold)"
         self.pan_up_while_pressed.bind("<ButtonPress>",self.do_pan_up)
@@ -151,7 +151,7 @@ class Application(tk.Frame):
         self.pan_up_while_pressed.grid(column=3,row=2)
 
         self.micro_up = tk.Button(self.joystickframe)
-        self.micro_up.img = tk.PhotoImage(file="icons" + os.sep + "micro-up.png")
+        self.micro_up.img = tk.PhotoImage(file="icons" + os.sep + "micro-up.png").subsample(2,2)
         self.micro_up["image"] = self.micro_up.img
         self.micro_up["text"] = "µUP"
         self.micro_up["command"] = self.do_microstep_up
@@ -159,14 +159,14 @@ class Application(tk.Frame):
 
         # down
         self.pan_down = tk.Button(self.joystickframe)
-        self.pan_down.img = tk.PhotoImage(file="icons" + os.sep + "play-down.png")
+        self.pan_down.img = tk.PhotoImage(file="icons" + os.sep + "play-down.png").subsample(2,2)
         self.pan_down["image"] = self.pan_down.img
         self.pan_down["text"] = "PAN DOWN"
         self.pan_down["command"] = self.do_pan_down
         self.pan_down.grid(column=3,row=7)
 
         self.pan_down_while_pressed = tk.Button(self.joystickframe)
-        self.pan_down_while_pressed.img = tk.PhotoImage(file="icons" + os.sep + "while-pressed-down.png")
+        self.pan_down_while_pressed.img = tk.PhotoImage(file="icons" + os.sep + "while-pressed-down.png").subsample(2,2)
         self.pan_down_while_pressed["image"] = self.pan_down_while_pressed.img
         self.pan_down_while_pressed["text"] = "PAN DOWN (hold)"
         self.pan_down_while_pressed.bind("<ButtonPress>",self.do_pan_down)
@@ -174,7 +174,7 @@ class Application(tk.Frame):
         self.pan_down_while_pressed.grid(column=3,row=6)
 
         self.micro_down = tk.Button(self.joystickframe)
-        self.micro_down.img = tk.PhotoImage(file="icons" + os.sep + "micro-down.png")
+        self.micro_down.img = tk.PhotoImage(file="icons" + os.sep + "micro-down.png").subsample(2,2)
         self.micro_down["image"] = self.micro_down.img
         self.micro_down["text"] = "µDOWN"
         self.micro_down["command"] = self.do_microstep_down
@@ -182,7 +182,7 @@ class Application(tk.Frame):
 
 
         self.b_stop = tk.Button(self.joystickframe)
-        self.b_stop.img = tk.PhotoImage(file="icons" + os.sep + "stop.png")
+        self.b_stop.img = tk.PhotoImage(file="icons" + os.sep + "stop.png").subsample(2,2)
         self.b_stop["image"] = self.b_stop.img
         self.b_stop["text"] = "STOP"
         self.b_stop["command"] = self.do_stop
@@ -190,40 +190,74 @@ class Application(tk.Frame):
 
     def create_additional_controls_frame(self):
         self.add_contr_frame = tk.LabelFrame(self)
-        self.add_contr_frame["text"] = "add. Controls"
-        self.add_contr_frame.grid(column=1,row=3)
+        self.add_contr_frame["text"] = "Controls"
+        self.add_contr_frame.grid(column=1,row=1,sticky=tk.N+tk.W+tk.E,padx=5,pady=5)
 
         # init
         self.init = tk.Button(self.add_contr_frame)
         self.init["text"] = "INIT"
         self.init["command"] = self.do_init
-        self.init.grid(column=8,row=3)
-		
-        self.speed_frame = tk.LabelFrame(self.add_contr_frame)
-        self.speed_frame.grid(column=1,row=3)
-        # speed
-        self.high_speed = tk.Checkbutton(self.speed_frame,text="high",variable="highspeed")
-        self.high_speed["text"] = "speed"
-        self.high_speed.grid(column=1,row=3)
-        # quit
+        self.init.grid(column=0,row=0,padx=5,pady=5,sticky=tk.E+tk.W)
 
+        self.speed_high = tk.Button(self.add_contr_frame)
+        self.speed_high["text"] = "High Speed"
+        self.speed_high["command"] = self.do_set_speed_high
+        self.speed_high.grid(column=0,row=1,padx=5,sticky=tk.E+tk.W)
+		
+        self.speed_high = tk.Button(self.add_contr_frame)
+        self.speed_high["text"] = "Med. Speed"
+        self.speed_high["command"] = self.do_set_speed_med
+        self.speed_high.grid(column=0,row=2,padx=5,sticky=tk.E+tk.W)
+		
+        self.speed_high = tk.Button(self.add_contr_frame)
+        self.speed_high["text"] = "Low Speed"
+        self.speed_high["command"] = self.do_set_speed_low
+        self.speed_high.grid(column=0,row=3,padx=5,sticky=tk.E+tk.W)
+		
+        # quit
         self.quit = tk.Button(self.add_contr_frame, text="QUIT", fg="red",
                               command=root.destroy, )
-        self.quit.grid(column=6,row=8)
+        self.quit.grid(column=0,row=4,padx=5,pady=5,sticky=tk.E+tk.W)
+        
+    def create_memory_buttons(self):
+        self.memframe = tk.LabelFrame(self)
+        self.memframe["text"] = "Position Memory"
+        self.memframe.grid(column=0,columnspan=2,row=2,sticky=tk.W+tk.E,padx=5,pady=5,ipady=5,ipadx=5)
+        
+        NR_OF_SLOTS = 8
+        self.mem_name = [None]*NR_OF_SLOTS
+        self.mem_desc = [None]*NR_OF_SLOTS
+        self.mem_store = [None]*NR_OF_SLOTS
+        self.mem_go = [None]*NR_OF_SLOTS
+        for line in range(0,NR_OF_SLOTS):
+            self.mem_name[line] = tk.Label(self.memframe)
+            self.mem_name[line]["text"] = "Slot %s:" % (line+1)
+            self.mem_name[line].grid(column=0,row=0+line,padx=5)
+            
+            self.mem_desc[line] = tk.Entry(self.memframe)
+            self.mem_desc[line].insert(0,"SLOT %s" % (line+1))
+            self.mem_desc[line].grid(column=1,row=0+line,padx=5)
 
-
-
-
+            self.mem_store[line] = tk.Button(self.memframe)
+            self.mem_store[line]["text"] = "Store Position!"
+            self.mem_store[line].grid(column=2,row=0+line,padx=5)
+            self.mem_store[line].slotnr = line+1
+            self.mem_store[line].bind('<Button-1>', self.do_store_position)
+           
+            self.mem_go[line] = tk.Button(self.memframe)
+            self.mem_go[line]["text"] = "Go to Position!"
+            self.mem_go[line].grid(column=3,row=0+line,padx=5)
+            self.mem_go[line].slotnr = line+1
+            self.mem_go[line].bind('<Button-1>', self.do_go_to_position)
 
     def do_connect(self,event=0):
         # connect to serial port contained in combobox
         portidx = self.cb_port.current()   # returns currently selected index, or -1 if current selection not contained in "values"
         print("PORTIDX=%s"%portidx)
+        print("PORT=%s"%self.available_ports[portidx])
         port = self.cb_port.get()
         if portidx==-1:
             # custom text content
-            pass
-        elif portidx==0:
             pass
         else:
             port = self.available_ports[portidx].device
@@ -281,6 +315,28 @@ class Application(tk.Frame):
     def do_pan_right(self,event=0):
         print("panning right")
         self.mount.pan_right()
+
+    def do_set_speed_high(self,event=0):
+        print("setting speed to high")
+        self.mount.set_speed(SPEED_HIGH)
+
+    def do_set_speed_med(self,event=0):
+        print("setting speed to medium")
+        self.mount.set_speed(SPEED_MEDIUM)
+
+    def do_set_speed_low(self,event=0):
+        print("setting speed to slow")
+        self.mount.set_speed(SPEED_SLOW)
+        
+    def do_store_position(self,event=0):
+        slotnr = event.widget.slotnr
+        print("storing current position to slot %s" % slotnr)
+        #self.mount.set_speed(SPEED_SLOW)
+
+    def do_go_to_position(self,event=0):
+        slotnr = event.widget.slotnr
+        print("moving to stored position slot %s" % slotnr)
+        #self.mount.set_speed(SPEED_SLOW)
 
     def do_stop(self,event=0):
         print("stopping")
