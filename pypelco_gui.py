@@ -239,16 +239,18 @@ class Application(tk.Frame):
             self.mem_desc[line].grid(column=1,row=0+line,padx=5)
 
             self.mem_store[line] = tk.Button(self.memframe)
-            self.mem_store[line]["text"] = "Store Position!"
+            self.mem_store[line]["text"] = "Store Position %s!" % (line+1)
             self.mem_store[line].grid(column=2,row=0+line,padx=5)
             self.mem_store[line].slotnr = line+1
             self.mem_store[line].bind('<Button-1>', self.do_store_position)
            
             self.mem_go[line] = tk.Button(self.memframe)
-            self.mem_go[line]["text"] = "Go to Position!"
+            self.mem_go[line]["text"] = "Go to Position %s!" % (line+1)
+            self.mem_go[line]["underline"] = 15
             self.mem_go[line].grid(column=3,row=0+line,padx=5)
             self.mem_go[line].slotnr = line+1
             self.mem_go[line].bind('<Button-1>', self.do_go_to_position)
+            # fast so... self.bind_all('<%s>' % (line+1), lambda e:self.do_go_to_position(1))
 
     def do_connect(self,event=0):
         # connect to serial port contained in combobox
@@ -331,12 +333,12 @@ class Application(tk.Frame):
     def do_store_position(self,event=0):
         slotnr = event.widget.slotnr
         print("storing current position to slot %s" % slotnr)
-        #self.mount.set_speed(SPEED_SLOW)
+        self.mount.store_position(slotnr)
 
     def do_go_to_position(self,event=0):
         slotnr = event.widget.slotnr
         print("moving to stored position slot %s" % slotnr)
-        #self.mount.set_speed(SPEED_SLOW)
+        self.mount.go_to_position(slotnr)
 
     def do_stop(self,event=0):
         print("stopping")
