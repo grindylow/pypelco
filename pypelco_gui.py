@@ -1,3 +1,4 @@
+
 #!/usr/bin/python3
 
 # Graphical User Interface for Controlling a PELCO-D Camera Mount
@@ -10,7 +11,20 @@
 # Copyright notices:
 #
 # - Uses Icons designed by 'Lucy G', 'Freepik' and 'Smashicons' from Flaticon.
+info = """
+Graphical User Interface for Controlling a PELCO-D Camera Mount
 
+specifically this seems to work well with a
+https://www.aliexpress.com/item/Pan-Tilt-motorized-rotation-bracket-stand-holder-PELCO-D-control-for-CCTV-IP-camera-module-RS232/32827664380.html
+
+
+
+Copyright notices:
+
+- Uses Icons designed by 'Lucy G', 'Freepik' and 'Smashicons' from Flaticon.
+
+
+"""
 import serial
 import serial.tools.list_ports
 import tkinter as tk
@@ -23,22 +37,21 @@ class Application(tk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
         self.pack()
-
         self.create_widgets()
-        #self.init_mount()
 
     def init_mount(self,port="com4"):
         ser = serial.Serial(port,timeout=.1,baudrate=2400)
         print(ser)
         self.mount = pelco_mount(ser)
-
+        
     def deinit_mount(self):
         self.mount.close_port()
 
     def create_widgets(self):
 
         self.winfo_toplevel().title("PELCO-D Controller")
-
+        
+        self.createMenu()
         self.create_connection_frame()
         self.create_joystick_frame()
         self.create_additional_controls_frame()
@@ -50,7 +63,22 @@ class Application(tk.Frame):
         # self.pan_up["text"] = "Select Speed"
         # self.pan_up["command"] = self.update_speed
         # self.pan_up.grid(column=8,row=1)
-
+            
+    def createMenu(self):
+        self.menu = tk.Menu(root)
+        root.config(menu=self.menu)
+        
+        #file
+        self.file_menu = tk.Menu(self.menu)
+        self.file_menu.add_command(label="Exit",command=root.destroy)
+        self.menu.add_cascade(label="File",menu=self.file_menu)
+        
+        #help
+        self.help_menu = tk.Menu(self.menu)
+        self.help_menu.add_command(label="Über Pypelco",command=self.print_help)
+        self.menu.add_cascade(label="Help",menu=self.help_menu)
+        
+    
     def create_connection_frame(self):
         self.connectionframe = tk.LabelFrame(self)
         self.connectionframe["text"] = "Connection"
@@ -70,7 +98,8 @@ class Application(tk.Frame):
         self.b_refresh["text"] = "Refresh port list!"
         self.b_refresh["command"] = self.do_refresh_port_list
         self.b_refresh.grid(column=2,row=0,padx=5)
-
+        self.default_color = self.b_refresh.cget("background")
+        
         self.b_connect = tk.Button(self.connectionframe)
         self.b_connect["text"] = "Connect!"
         self.b_connect["command"] = self.do_connect
@@ -193,27 +222,18 @@ class Application(tk.Frame):
         self.add_contr_frame["text"] = "Controls"
         self.add_contr_frame.grid(column=1,row=1,sticky=tk.N+tk.W+tk.E,padx=5,pady=5)
 
-        # init
-        self.init = tk.Button(self.add_contr_frame)
-        self.init["text"] = "INIT"
-        self.init["command"] = self.do_init
-        self.init.grid(column=0,row=0,padx=5,pady=5,sticky=tk.E+tk.W)
 
-        self.speed_high = tk.Button(self.add_contr_frame)
-        self.speed_high["text"] = "High Speed"
-        self.speed_high["command"] = self.do_set_speed_high
-        self.speed_high.grid(column=0,row=1,padx=5,sticky=tk.E+tk.W)
-		
-        self.speed_high = tk.Button(self.add_contr_frame)
-        self.speed_high["text"] = "Med. Speed"
-        self.speed_high["command"] = self.do_set_speed_med
-        self.speed_high.grid(column=0,row=2,padx=5,sticky=tk.E+tk.W)
-		
-        self.speed_high = tk.Button(self.add_contr_frame)
-        self.speed_high["text"] = "Low Speed"
-        self.speed_high["command"] = self.do_set_speed_low
-        self.speed_high.grid(column=0,row=3,padx=5,sticky=tk.E+tk.W)
-		
+
+        self.NROFSPEEDS = 3
+        self.speed_button = [None]*self.NROFSPEEDS
+        # init
+        for speed in range(0,self.NROFSPEEDS):
+            self.speed_button[speed] = tk.Button(self.add_contr_frame)
+            self.speed_button[speed]["text"] = "Speed %s" % (speed+1)
+            self.speed_button[speed].bind('<Button-1>', self.do_set_speed)
+            self.speed_button[speed].grid(column=0,row=(speed+1),padx=5,sticky=tk.E+tk.W)
+            self.speed_button[speed].speednr = speed
+        
         # quit
         self.quit = tk.Button(self.add_contr_frame, text="QUIT", fg="red",
                               command=root.destroy, )
@@ -222,14 +242,15 @@ class Application(tk.Frame):
     def create_memory_buttons(self):
         self.memframe = tk.LabelFrame(self)
         self.memframe["text"] = "Position Memory"
-        self.memframe.grid(column=0,columnspan=2,row=2,sticky=tk.W+tk.E,padx=5,pady=5,ipady=5,ipadx=5)
+        self.memframe.grid(column=0,columnspan=2,
+                    row=2,sticky=tk.W+tk.E,padx=5,pady=5,ipady=5,ipadx=5)
         
-        NR_OF_SLOTS = 8
-        self.mem_name = [None]*NR_OF_SLOTS
-        self.mem_desc = [None]*NR_OF_SLOTS
-        self.mem_store = [None]*NR_OF_SLOTS
-        self.mem_go = [None]*NR_OF_SLOTS
-        for line in range(0,NR_OF_SLOTS):
+        self.NR_OF_SLOTS = 8
+        self.mem_name = [None]*self.NR_OF_SLOTS
+        self.mem_desc = [None]*self.NR_OF_SLOTS
+        self.mem_store = [None]*self.NR_OF_SLOTS
+        self.mem_go = [None]*self.NR_OF_SLOTS
+        for line in range(0,self.NR_OF_SLOTS):
             self.mem_name[line] = tk.Label(self.memframe)
             self.mem_name[line]["text"] = "Slot %s:" % (line+1)
             self.mem_name[line].grid(column=0,row=0+line,padx=5)
@@ -251,7 +272,12 @@ class Application(tk.Frame):
             self.mem_go[line].slotnr = line+1
             self.mem_go[line].bind('<Button-1>', self.do_go_to_position)
             # fast so... self.bind_all('<%s>' % (line+1), lambda e:self.do_go_to_position(1))
-
+        
+    def print_help(self):
+        print("Info:")
+        print()
+        print(info)
+    
     def do_connect(self,event=0):
         # connect to serial port contained in combobox
         portidx = self.cb_port.current()   # returns currently selected index, or -1 if current selection not contained in "values"
@@ -275,18 +301,18 @@ class Application(tk.Frame):
 
     def do_refresh_port_list(self,event=0):
         self.available_ports = serial.tools.list_ports.comports()
-        #for p in ports:
-        #    d=dir(p)
-        #    for n in d:
-        #        print("%s: "%str(n) + str(p.__getattribute__(n)))
         self.cb_port["values"] = [x.description for x in self.available_ports]
+
         if len(self.cb_port["values"]) == 0:
             print("No ports found!")
         else:
             self.cb_port.current(0)
 
-    def say_hi(self):
+    def say_hi(self,event=0):
         print("hi there, everyone!")
+        
+    def change_bg_speed(self,button, color, event=0):
+        button["bg"] = color
 
     def do_pan_left(self,event=0):
         print("panning left")
@@ -317,18 +343,36 @@ class Application(tk.Frame):
     def do_pan_right(self,event=0):
         print("panning right")
         self.mount.pan_right()
-
+        
+    def do_set_speed(self,event=0):
+    
+        spnrset = event.widget.speednr
+        print(spnrset)
+        for x in range(0,self.NROFSPEEDS):
+            origin_color = self.speed_button[x].cget("background")
+            if x == spnrset:
+                self.speed_button[spnrset]["bg"] = "grey"
+                self.mount.set_speed(spnrset)
+            else:
+                self.speed_button[x]["bg"] = self.default_color
+        
+        
+    
     def do_set_speed_high(self,event=0):
         print("setting speed to high")
         self.mount.set_speed(SPEED_HIGH)
+        self.change_bg(button=self.speed_high,color="grey")
 
     def do_set_speed_med(self,event=0):
         print("setting speed to medium")
         self.mount.set_speed(SPEED_MEDIUM)
+        self.change_bg(button=self.speed_med,color="grey")
 
     def do_set_speed_low(self,event=0):
         print("setting speed to slow")
-        self.mount.set_speed(SPEED_SLOW)
+        self.mount.set_speed(SPEED_LOW)
+        self.change_bg(button=self.speed_low,color="grey")
+        
         
     def do_store_position(self,event=0):
         slotnr = event.widget.slotnr

@@ -8,9 +8,9 @@
 #  - https://www.commfront.com/pages/pelco-d-protocol-tutorial
 #  - https://www.codeproject.com/Articles/8034/Pelco-P-and-D-protocol-implementation-in-C
 
-SPEED_SLOW = 1
-SPEED_MEDIUM = 2
-SPEED_HIGH = 3
+SPEED_LOW = 0
+SPEED_MEDIUM = 1
+SPEED_HIGH = 2
 
 class pelco_mount():
 
@@ -64,12 +64,12 @@ class pelco_mount():
         return self.msg_go_pre(14)
         
     def msg_set_speed(self,speed):
-        if speed==SPEED_SLOW:
-            return self.msg_set_pre(15)
+        if speed==SPEED_HIGH:
+            return self.msg_set_pre(17)
         elif speed==SPEED_MEDIUM:
             return self.msg_set_pre(16)
-        elif speed==SPEED_HIGH:
-            return self.msg_set_pre(17)
+        elif speed==SPEED_LOW:
+            return self.msg_set_pre(15)
         else: 
             throw(Exception("invalid speed setting"))
         
