@@ -61,7 +61,8 @@ class Application(tk.Frame):
         self.create_joystick_frame()
         self.create_additional_controls_frame()
         self.create_memory_buttons()
-        self.do_connect(True)
+        if open( os.path.join(os.getcwd(), 'con_check.txt') ).read() == str(1):
+            self.do_connect(True)
         
         
         # init
@@ -78,7 +79,7 @@ class Application(tk.Frame):
         #file
         self.pelco_menu = tk.Menu(self.menu)
         self.pelco_menu.add_command(label="Info",command=self.print_help)
-        #self.pelco_menu.add_command(label="Settings",command=self.go_to_settings)
+        self.pelco_menu.add_command(label="Settings",command=self.go_to_settings)
         self.pelco_menu.add_command(label="Exit",command=root.destroy)
         self.menu.add_cascade(label="Pypelco",menu=self.pelco_menu)
         
@@ -292,9 +293,12 @@ class Application(tk.Frame):
         print(info)
     
     def go_to_settings(self):
+        root.destroy()
         apop = appsettings(master=tk.Tk())
         apop.mainloop()
 
+        
+        
 
     def do_connect(self, Autoconnect=False, event=0):
         # connect to serial port contained in combobox
