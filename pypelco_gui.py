@@ -1,4 +1,3 @@
-
 #!/usr/bin/python3
 
 # Graphical User Interface for Controlling a PELCO-D Camera Mount
@@ -11,6 +10,7 @@
 # Copyright notices:
 #
 # - Uses Icons designed by 'Lucy G', 'Freepik' and 'Smashicons' from Flaticon.
+
 info = """
 Graphical User Interface for Controlling a PELCO-D Camera Mount
 
@@ -25,6 +25,8 @@ Copyright notices:
 
 
 """
+#imports
+
 import serial
 import serial.tools.list_ports
 import tkinter as tk
@@ -32,6 +34,8 @@ import tkinter.ttk
 import os
 
 from pelco_mount import *
+from pypelco_gui_einstellungen import *
+
 
 class Application(tk.Frame):
     def __init__(self, master=None):
@@ -43,6 +47,7 @@ class Application(tk.Frame):
         ser = serial.Serial(port,timeout=.1,baudrate=2400)
         print(ser)
         self.mount = pelco_mount(ser)
+       
         
     def deinit_mount(self):
         self.mount.close_port()
@@ -56,6 +61,8 @@ class Application(tk.Frame):
         self.create_joystick_frame()
         self.create_additional_controls_frame()
         self.create_memory_buttons()
+        self.do_connect(True)
+        
         
         # init
         # speed
@@ -69,20 +76,18 @@ class Application(tk.Frame):
         root.config(menu=self.menu)
         
         #file
-        self.file_menu = tk.Menu(self.menu)
-        self.file_menu.add_command(label="Exit",command=root.destroy)
-        self.menu.add_cascade(label="File",menu=self.file_menu)
-        
-        #help
-        self.help_menu = tk.Menu(self.menu)
-        self.help_menu.add_command(label="Über Pypelco",command=self.print_help)
-        self.menu.add_cascade(label="Help",menu=self.help_menu)
+        self.pelco_menu = tk.Menu(self.menu)
+        self.pelco_menu.add_command(label="Info",command=self.print_help)
+        #self.pelco_menu.add_command(label="Settings",command=self.go_to_settings)
+        self.pelco_menu.add_command(label="Exit",command=root.destroy)
+        self.menu.add_cascade(label="Pypelco",menu=self.pelco_menu)
         
     
     def create_connection_frame(self):
         self.connectionframe = tk.LabelFrame(self)
         self.connectionframe["text"] = "Connection"
-        self.connectionframe.grid(column=0,columnspan=2,row=0,sticky=tk.W+tk.E,padx=5,pady=5,ipady=5,ipadx=5)
+        self.connectionframe.grid(column=0,columnspan=2,row=0,sticky=tk.W+tk.E,
+                                    padx=5,pady=5,ipady=5,ipadx=5)
 
         self.cb_port_label = tk.Label(self.connectionframe)
         self.cb_port_label["text"] = "COM-Port:"
@@ -112,23 +117,27 @@ class Application(tk.Frame):
 
         self.connection_status_label = tk.Label(self.connectionframe)
         self.connection_status_label["text"] = "Connection status: not initialised"
-        self.connection_status_label.grid(column=0,row=1,columnspan=5,sticky=tk.W,padx=5,pady=5,ipady=5,ipadx=5)
+        self.connection_status_label.grid(column=0,row=1,columnspan=5,
+                                        sticky=tk.W,padx=5,pady=5,ipady=5,ipadx=5)
 
     def create_joystick_frame(self):
         self.joystickframe = tk.LabelFrame(self)
         self.joystickframe["text"] = "Joystick"
-        self.joystickframe.grid(column=0,row=1,sticky=tk.W+tk.E,padx=5,pady=5,ipady=5,ipadx=5)
+        self.joystickframe.grid(column=0,row=1,sticky=tk.W+tk.E,padx=5,
+                                pady=5,ipady=5,ipadx=5)
 
         # left
         self.pan_left = tk.Button(self.joystickframe)
-        self.pan_left.img = tk.PhotoImage(file="icons" + os.sep + "play-left.png").subsample(2,2)
+        self.pan_left.img = tk.PhotoImage(
+                file="icons" + os.sep + "play-left.png").subsample(2,2)
         self.pan_left["image"] = self.pan_left.img
         self.pan_left["text"] = "PAN LEFT"
         self.pan_left["command"] = self.do_pan_left
         self.pan_left.grid(column=0,row=4)
 
         self.pan_left_while_pressed = tk.Button(self.joystickframe)
-        self.pan_left_while_pressed.img = tk.PhotoImage(file="icons" + os.sep + "while-pressed-left.png").subsample(2,2)
+        self.pan_left_while_pressed.img = tk.PhotoImage(
+                file="icons" + os.sep + "while-pressed-left.png").subsample(2,2)
         self.pan_left_while_pressed["image"] = self.pan_left_while_pressed.img
         self.pan_left_while_pressed["text"] = "PAN LEFT (hold)"
         self.pan_left_while_pressed.bind("<ButtonPress>",self.do_pan_left)
@@ -136,7 +145,8 @@ class Application(tk.Frame):
         self.pan_left_while_pressed.grid(column=1,row=4)
 
         self.micro_left = tk.Button(self.joystickframe)
-        self.micro_left.img = tk.PhotoImage(file="icons" + os.sep + "micro-left.png").subsample(2,2)
+        self.micro_left.img = tk.PhotoImage(
+                file="icons" + os.sep + "micro-left.png").subsample(2,2)
         self.micro_left["image"] = self.micro_left.img
         self.micro_left["text"] = "µLEFT"
         self.micro_left["command"] = self.do_microstep_left
@@ -144,13 +154,15 @@ class Application(tk.Frame):
 
         # right
         self.pan_right = tk.Button(self.joystickframe)
-        self.pan_right.img = tk.PhotoImage(file="icons" + os.sep + "play-right.png").subsample(2,2)
+        self.pan_right.img = tk.PhotoImage(
+                file="icons" + os.sep + "play-right.png").subsample(2,2)
         self.pan_right["image"] = self.pan_right.img
         self.pan_right["command"] = self.do_pan_right
         self.pan_right.grid(column=6,row=4)
 
         self.pan_right_while_pressed = tk.Button(self.joystickframe)
-        self.pan_right_while_pressed.img = tk.PhotoImage(file="icons" + os.sep + "while-pressed-right.png").subsample(2,2)
+        self.pan_right_while_pressed.img = tk.PhotoImage(
+                file="icons" + os.sep + "while-pressed-right.png").subsample(2,2)
         self.pan_right_while_pressed["image"] = self.pan_right_while_pressed.img
         self.pan_right_while_pressed["text"] = "PAN RIGHT (hold)"
         self.pan_right_while_pressed.bind("<ButtonPress>",self.do_pan_right)
@@ -220,7 +232,8 @@ class Application(tk.Frame):
     def create_additional_controls_frame(self):
         self.add_contr_frame = tk.LabelFrame(self)
         self.add_contr_frame["text"] = "Controls"
-        self.add_contr_frame.grid(column=1,row=1,sticky=tk.N+tk.W+tk.E,padx=5,pady=5)
+        self.add_contr_frame.grid(column=1,row=1,sticky=tk.N+tk.W+tk.E,
+                                    padx=5,pady=5)
 
 
 
@@ -231,7 +244,8 @@ class Application(tk.Frame):
             self.speed_button[speed] = tk.Button(self.add_contr_frame)
             self.speed_button[speed]["text"] = "Speed %s" % (speed+1)
             self.speed_button[speed].bind('<Button-1>', self.do_set_speed)
-            self.speed_button[speed].grid(column=0,row=(speed+1),padx=5,sticky=tk.E+tk.W)
+            self.speed_button[speed].grid(column=0,row=(speed+1),
+                                            padx=5,sticky=tk.E+tk.W)
             self.speed_button[speed].speednr = speed
         
         # quit
@@ -271,15 +285,20 @@ class Application(tk.Frame):
             self.mem_go[line].grid(column=3,row=0+line,padx=5)
             self.mem_go[line].slotnr = line+1
             self.mem_go[line].bind('<Button-1>', self.do_go_to_position)
-            # fast so... self.bind_all('<%s>' % (line+1), lambda e:self.do_go_to_position(1))
         
     def print_help(self):
         print("Info:")
         print()
         print(info)
     
-    def do_connect(self,event=0):
+    def go_to_settings(self):
+        apop = appsettings(master=tk.Tk())
+        apop.mainloop()
+
+
+    def do_connect(self, Autoconnect=False, event=0):
         # connect to serial port contained in combobox
+
         portidx = self.cb_port.current()   # returns currently selected index, or -1 if current selection not contained in "values"
         print("PORTIDX=%s"%portidx)
         print("PORT=%s"%self.available_ports[portidx])
@@ -291,13 +310,16 @@ class Application(tk.Frame):
             port = self.available_ports[portidx].device
         print("Connecting to '%s'..."%port)
         self.init_mount(port)
-        if portidx==0:
+        if portidx==-1:
             self.connection_status_label["text"] = "Connection status: No available ports found."
-        self.connection_status_label["text"] = "Connection status: Connected to %s."%port
+        elif Autoconnect == True:
+            self.connection_status_label["text"] = "Connection status: Autoconnected to %s."%port
+        else:
+            self.connection_status_label["text"] = "Connection status: Connected to %s."%port
 
     def do_disconnect(self,event=0):
         self.deinit_mount()
-        self.connection_status_label["text"] = "Connection status: not connected."
+        self.connection_status_label["text"] = "Connection status: Not connected."
 
     def do_refresh_port_list(self,event=0):
         self.available_ports = serial.tools.list_ports.comports()
