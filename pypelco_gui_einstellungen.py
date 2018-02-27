@@ -6,10 +6,9 @@ import tkinter.ttk
 from helpers import *
 
 
-class appsettings(tk.Frame):
+class appsettings():
     def __init__(self, master=None):
-        self.master = master
-        super().__init__(master)
+        self.master = tk.Toplevel()
         self.create_widgets()
         
     def create_widgets(self):
@@ -18,7 +17,7 @@ class appsettings(tk.Frame):
         self.create_ok()
         
     def create_ask_con_frame(self):
-        self.ask_con_frame = tk.LabelFrame(self)
+        self.ask_con_frame = tk.LabelFrame(self.master)
         self.ask_con_frame["text"] = "AutoConnection"
         self.ask_con_frame.grid(column=0,columnspan=2,row=0,sticky=tk.W+tk.E,
                                     padx=5,pady=5,ipady=5,ipadx=5)
@@ -62,6 +61,5 @@ class appsettings(tk.Frame):
         
 
 if __name__=='__main__':
-    root=tk.Tk()
-    apop = appsettings(master=root)
+    apop = appsettings()
     apop.mainloop()

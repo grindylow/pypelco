@@ -293,9 +293,9 @@ class Application(tk.Frame):
         print(info)
     
     def go_to_settings(self):
-        root.destroy()
-        apop = appsettings(master=tk.Tk())
-        apop.mainloop()
+        #root.destroy()
+        apop = appsettings()
+        # 
 
         
         
